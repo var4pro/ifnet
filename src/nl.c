@@ -305,6 +305,12 @@ int do_delqdisc(int fd, unsigned int ifindex, char *buf, int bufsize) {
     return 0;
 } 
 
+// delete qdisk from iface 
+int del_qdisc(int fd, unsigned int ifindex) {
+    char buf[1 << 12];
+    return do_delqdisc(fd, ifindex, buf, sizeof(buf));
+}
+
 // set tbf shaping to interface, speed in bytes/sec
 int set_tc(int fd, unsigned int ifindex, unsigned int speed) {
     char buf[1 << 12]; 

@@ -12,11 +12,12 @@ void print_usage(const char *prog_name) {
     printf("  %s set <ifname> up          - set iface up/down\n", prog_name);
     printf("  %s set <ifname> mtu <mtu>   - set iface mtu to <mtu>\n", prog_name);
     printf("  %s set <ifname> speed <N>   - set iface speed to <N> bytes/sec\n", prog_name);
+    printf("  %s del <ifname> qdisc       - delete qdisc on iface\n", prog_name);
 }
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        print_usage("link");
+        print_usage(argv[0]);
         return 0;
     }
 
@@ -24,11 +25,25 @@ int main(int argc, char *argv[]) {
     if (strcmp(argv[1], "show") == 0) {
         show(fd);
     } 
+
+    else if (strcmp(argv[1], "del") == 0) {
+        if (argc < 4) {
+            fprintf(stderr, "del usage: del <ifname> qdisc\n");
+        }
+
+        if (strcmp(argv[3], "qdisc") == 0) {
+            char *ifname = argv[2];
+            unsigned int ifi = if_nametoindex(ifname);
+
+            del_qdisc(fd, ifi);
+        }
+    }
     
     else if (strcmp(argv[1], "set") == 0) {
         if (argc < 4) {
             fprintf(stderr, "set requires ifname and action\n");
             print_usage(argv[0]);
+            close_socket(fd);
             return 1;
         }
 
